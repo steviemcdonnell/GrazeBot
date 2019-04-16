@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="83dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="55dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonMap"
+        app:srcCompat="@mipmap/ic_launcher_round" />
+
+    <Button
+        android:id="@+id/buttonControl"
+        android:layout_width="160dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="97dp"
+        android:background="@color/colorPrimaryDark"
+        android:onClick="onClickSwitchControl"
+        android:text="Controls"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintBottom_toTopOf="@+id/buttonTimer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/MainMenu" />
+
+    <TextView
+        android:id="@+id/MainMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:layout_marginBottom="132dp"
+        android:text="Main Menu"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_constraintBottom_toTopOf="@+id/buttonControl"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonMap"
+        android:layout_width="160dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="56dp"
+        android:background="@color/colorPrimaryDark"
+        android:onClick="onClickSwitchMaps"
+        android:text="Map"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonTimer" />
+
+    <Button
+        android:id="@+id/buttonTimer"
+        android:layout_width="160dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="98dp"
+        android:background="@color/colorPrimaryDark"
+        android:onClick="onClickSwitchTimer"
+        android:text="Timer"
+        android:textColor="@android:color/background_light"
+        app:layout_constraintBottom_toTopOf="@+id/buttonMap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonControl" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="52dp"
+        android:text="TextView"
+        app:layout_constraintStart_toStartOf="@+id/MainMenu"
+        app:layout_constraintTop_toBottomOf="@+id/MainMenu" />
+</android.support.constraint.ConstraintLayout>
