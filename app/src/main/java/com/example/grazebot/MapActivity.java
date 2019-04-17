@@ -1,8 +1,7 @@
 package com.example.grazebot;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v4.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -11,30 +10,39 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends AppCompatActivity
-        implements OnMapReadyCallback{
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        // Get the SupportMapFragment and request notification
-        // when the map is ready to be used.
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-    }
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        // Add a marker for home,
-        // and move the map's camera to the same location.
-        LatLng home = new LatLng(+53.0568, -14.8270);
-        googleMap.addMarker(new MarkerOptions().position(home)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(home));
+        mapFragment
+                .getMapAsync(this);
     }
 
-    public void onClickClose(View view) {
-        finish();
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng home = new LatLng(53.883746, -9.247447);
+        mMap.addMarker(new MarkerOptions()
+                .position(home)
+                .draggable(true)
+                .title("Marker in Mayo"));
+        mMap.moveCamera(CameraUpdateFactory
+                .newLatLng(home));
+        //mMap.setMyLocationEnabled(true);
     }
 }
