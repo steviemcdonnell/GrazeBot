@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008000</color>
+    <color name="colorPrimary">#008200</color>
     <color name="colorPrimaryDark">#006400</color>
+    <color name="fail_to_connect">#FF8800</color>
+    <color name="connected">#77FF88</color>
 </resources>

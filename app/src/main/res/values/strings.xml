@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">GrazeBot</string>
+    <string name="main_menu">Main Menu</string>
+    <string name="reverse_btn">Reverse</string>
+    <string name="forward_btn">Forward</string>
+    <string name="left_btn">Left</string>
+    <string name="right_btn">Right</string>
+    <string name="control_title">Control Menu</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="ip_address_label">IP Address:</string>
+    <string name="port_label">Port:</string>
+    <string name="test_button">Test Connection</string>
+    <string name="test_label">Status:</string>
+    <string name="test_status">Not Connected</string>
+    <string name="test_ip_address">192.168.0.186</string>
+    <string name="test_port">8090</string>
+
 </resources>

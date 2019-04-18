@@ -1,21 +1,28 @@
 package com.example.grazebot;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MapActivity";
+    private String IP_ADDRESS = "";
+    private String PORT = "";
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
@@ -28,8 +35,37 @@ public class MainActivity extends AppCompatActivity {
             initMap();
         }
     }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if( requestCode == 1) { // Settings Intent Return
+            if(resultCode == Activity.RESULT_OK){
+                try {
+                    assert data != null;
+                    Bundle bundle = data.getBundleExtra("data");
+                    IP_ADDRESS = bundle.getString("ip_address");
+                    TextView ip_port_label = (TextView) findViewById(R.id.ip_address);
+                    ip_port_label.setText(IP_ADDRESS);
+                } catch(NullPointerException e){
+                    Log.e(TAG, "onActivityResult: no bundle in intent return " + e.getMessage());
+                }
+            }
+            else{
+                Log.d(TAG, "onActivityResult: Nothing returned");
+            }
+        }
+    }
+
+    public void onClickSwitchSettings(View view) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivityForResult(intent, 1);
+        Log.d(TAG, "onClickSwitchSettings: ");
+    }
+
     public void onClickSwitchControl(View view) {
         Intent intent = new Intent(this, ControlActivity.class);
+        Log.d(TAG, "onClickSwitchControl: ");
         startActivity(intent);
     }
     public void onClickSwitchTimer(View view) {
