@@ -67,11 +67,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ControlActivity.class);
         Log.d(TAG, "onClickSwitchControl: ");
         startActivity(intent);
-    }
+    }/*
     public void onClickSwitchTimer(View view) {
         Intent intent = new Intent(this, TimerActivity.class);
         startActivity(intent);
-    }/*
+    }
     public void onClickSwitchMaps(View view) {
         Intent intent = new Intent(this, MapActivity.class);
         startActivity(intent);
