@@ -9,7 +9,8 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapActivity" />
+        tools:context=".MapActivity"
+        />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,9 +19,30 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:elevation="10dp"
-        android:background="#fff"
+        android:background="@drawable/white_border"
         android:id="@+id/relLayout1">
-        
-    </RelativeLayout>
 
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:id="@+id/ic_magnify"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ic_magnify"
+            />
+        
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/ic_magnify"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:textColor="#000"
+            android:id="@+id/input_search"
+            android:background="@null"
+            android:hint="Enter location"
+            android:imeOptions="actionSearch"
+            />
+
+    </RelativeLayout>
 </RelativeLayout>
