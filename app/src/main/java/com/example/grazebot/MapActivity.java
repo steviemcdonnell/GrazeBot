@@ -28,6 +28,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -50,13 +51,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     // Variables
     private boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
+    private Marker marker;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        mSearchText = (EditText) findViewById(R.id.input_search);
+        //mSearchText = (EditText) findViewById(R.id.input_search);
 
         getLocationPermission();
     }
@@ -64,11 +66,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private void init() {
         Log.d(TAG, "init: Initialising");
 
+        /*
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE
-                    || keyEvent.getAction() == keyEvent.ACTION_DOWN || keyEvent.getAction() == keyEvent.KEYCODE_ENTER) {
+                        || keyEvent.getAction() == keyEvent.ACTION_DOWN || keyEvent.getAction() == keyEvent.KEYCODE_ENTER) {
                     // Execute method for searching
                     geoLocate();
                 }
@@ -77,6 +80,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         });
 
         hideSoftKeyboard();
+        */
     }
 
     private void geoLocate() {
@@ -86,12 +90,12 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
         Geocoder geocoder = new Geocoder(MapActivity.this);
         List<Address> list = new ArrayList<>();
-        try{
+        try {
             list = geocoder.getFromLocationName(searchString, 1);
-        } catch(IOException e) {
+        } catch (IOException e) {
             Log.d(TAG, "geoLocate: IOException" + e.getMessage());
         }
-        if(list.size() > 0) {
+        if (list.size() > 0) {
             Address address = list.get(0);  // First position in list
 
             Log.d(TAG, "geoLocate: Found location" + address.toString());
@@ -134,14 +138,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, "moveCamera: Moving the camera to lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-        if(!title.equals("My Location")) {
+        if (!title.equals("My Location")) {
             MarkerOptions options = new MarkerOptions()
                     .position(latLng)
                     .title(title);
             mMap.addMarker(options);
         }
 
-        hideSoftKeyboard();
+        //hideSoftKeyboard();
     }
 
     private void getLocationPermission() {
@@ -215,11 +219,34 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 return;
             }
             mMap.setMyLocationEnabled(true);
-            mMap.getUiSettings().setMyLocationButtonEnabled(false);
+            //mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
             init();
             //mMap.getUiSettings().
         }
+
+        if (mMap != null) {
+            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                @Override
+                public void onMapLongClick(LatLng latLng) {
+                    Geocoder geocoder = new Geocoder(MapActivity.this);
+                    List<Address> list;
+                    try {
+                        list = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                    } catch (IOException e) {
+                        return;
+                    }
+                    Address address = list.get(0);
+                    if (marker != null) {
+                        marker.remove();
+                    }
+                    MarkerOptions options = new MarkerOptions()
+                            .title(address.getLocality())
+                            .position(new LatLng(latLng.latitude, latLng.longitude));
+                    marker = mMap.addMarker(options);
+                    Toast.makeText(getApplicationContext(), "Lat: " + latLng.latitude + ",\nLong : " + latLng.longitude, Toast.LENGTH_LONG).show();
+                }
+            });
         /*
         // Add a marker in Sydney and move the camera
         LatLng home = new LatLng(53.883746, -9.247447);
@@ -231,10 +258,14 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 .newLatLng(home));
         //mMap.setMyLocationEnabled(true);
         //END COMMENT BLOCK HERE!!!!*/
-    }
+        }
 
+    /*
     private void hideSoftKeyboard() {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+    }
+    */
+
     }
 }
 
