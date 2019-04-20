@@ -32,17 +32,16 @@ public class JSONParser {
 
     }
 
-    // function get json from url
-    // by making HTTP POST or GET mehtod
+    // Function get JSON from URL by making HTTP POST or GET method
     public JSONObject makeHttpRequest(String url, String method,
                                       List<NameValuePair> params) {
 
         // Making HTTP request
         try {
 
-            // check for request method
+            // Check for request method
             if(method == "POST"){
-                // request method is POST
+                // Request method is POST
                 // defaultHttpClient
                 DefaultHttpClient httpClient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost(url);
@@ -53,7 +52,7 @@ public class JSONParser {
                 is = httpEntity.getContent();
 
             }else if(method == "GET"){
-                // request method is GET
+                // Request method is GET
                 DefaultHttpClient httpClient = new DefaultHttpClient();
                 String paramString = URLEncodedUtils.format(params, "utf-8");
                 url += "?" + paramString;
@@ -87,14 +86,14 @@ public class JSONParser {
             Log.e("Buffer Error", "Error converting result " + e.toString());
         }
 
-        // try parse the string to a JSON object
+        // Try parse the string to a JSON object
         try {
             jObj = new JSONObject(json);
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
 
-        // return JSON String
+        // Return JSON String
         return jObj;
 
     }

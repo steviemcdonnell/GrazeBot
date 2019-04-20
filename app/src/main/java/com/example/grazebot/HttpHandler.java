@@ -1,4 +1,3 @@
-// https://www.tutorialspoint.com/android/android_json_parser.htm
 package com.example.grazebot;
 
 import android.annotation.SuppressLint;
@@ -75,7 +74,7 @@ class HttpHandler {
 
         // Helper method to build a response from the many lines in a server response
         private String convertStreamToString(InputStream is) {
-            // setup I/O resources
+            // Setup I/O resources
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             StringBuilder sb = new StringBuilder();
 
@@ -104,30 +103,29 @@ class HttpHandler {
     // AsyncTask to allow communication with Python Server
     @SuppressLint("StaticFieldLeak")
     private class ClientRequest extends AsyncTask<String, Void, String> {
-        // RUNS ON GUI THREAD!
+        // uns on GUI thread
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-
         }
 
         // Runs on separate thread, File I/O, Networking, etc. done here.
         @Override
         protected String doInBackground(String... strings) {
             HttpService sh = new HttpService();
-            // Create url to connect to i.e. Python server on local network
+            // Create URL to connect to (i.e. Python server on local network)
             String url = strings[0];
             String data = strings[1];
             Log.e(TAG, "doInBackground: " + url + "  Data: " + data);
-            // Obtain the json response from the server.
+            // Obtain the JSON response from the server
             String jsonStr = sh.makeServiceCall(url, data);
 
-            // Show what was the response from the python server
+            // Show what was the response from the Python server
             Log.e(TAG, "Response from url: " + jsonStr);
             return jsonStr;
         }
 
-        // RUNS ON GUI THREAD!
+        // Runs on GUI thread
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);

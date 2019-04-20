@@ -1,7 +1,6 @@
 package com.example.grazebot;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -12,15 +11,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,7 +26,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -45,70 +36,27 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15;
-
-    // Widgets
-    private EditText mSearchText;
+    
     // Variables
     private boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
     private Marker marker;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        //mSearchText = (EditText) findViewById(R.id.input_search);
 
         getLocationPermission();
     }
 
     private void init() {
         Log.d(TAG, "init: Initialising");
-
-        /*
-        mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent keyEvent) {
-                if(actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE
-                        || keyEvent.getAction() == keyEvent.ACTION_DOWN || keyEvent.getAction() == keyEvent.KEYCODE_ENTER) {
-                    // Execute method for searching
-                    geoLocate();
-                }
-                return false;
-            }
-        });
-
-        hideSoftKeyboard();
-        */
-    }
-
-    private void geoLocate() {
-        Log.d(TAG, "geoLocate: Geolocating...");
-
-        String searchString = mSearchText.getText().toString();
-
-        Geocoder geocoder = new Geocoder(MapActivity.this);
-        List<Address> list = new ArrayList<>();
-        try {
-            list = geocoder.getFromLocationName(searchString, 1);
-        } catch (IOException e) {
-            Log.d(TAG, "geoLocate: IOException" + e.getMessage());
-        }
-        if (list.size() > 0) {
-            Address address = list.get(0);  // First position in list
-
-            Log.d(TAG, "geoLocate: Found location" + address.toString());
-            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
-
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM,
-                    address.getAddressLine(0));
-        }
     }
 
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: Getting the devices current location");
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        FusedLocationProviderClient mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         try {
             if (mLocationPermissionsGranted) {
@@ -144,8 +92,6 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     .title(title);
             mMap.addMarker(options);
         }
-
-        //hideSoftKeyboard();
     }
 
     private void getLocationPermission() {
@@ -196,6 +142,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     }
                     Log.d(TAG, "onRequestPermissionsResult: Permission Granted");
                     mLocationPermissionsGranted = true;
+                    
                     // Initialise the map
                     initMap();
                 }
@@ -219,10 +166,8 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 return;
             }
             mMap.setMyLocationEnabled(true);
-            //mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
             init();
-            //mMap.getUiSettings().
         }
 
         if (mMap != null) {
@@ -247,25 +192,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     Toast.makeText(getApplicationContext(), "Lat: " + latLng.latitude + ",\nLong : " + latLng.longitude, Toast.LENGTH_LONG).show();
                 }
             });
-        /*
-        // Add a marker in Sydney and move the camera
-        LatLng home = new LatLng(53.883746, -9.247447);
-        mMap.addMarker(new MarkerOptions()
-                .position(home)
-                .draggable(true)
-                .title("Marker in Mayo"));
-        mMap.moveCamera(CameraUpdateFactory
-                .newLatLng(home));
-        //mMap.setMyLocationEnabled(true);
-        //END COMMENT BLOCK HERE!!!!*/
         }
-
-    /*
-    private void hideSoftKeyboard() {
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-    }
-    */
-
     }
 }
 

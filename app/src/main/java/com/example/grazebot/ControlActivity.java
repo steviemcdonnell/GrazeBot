@@ -1,9 +1,8 @@
 package com.example.grazebot;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.IdRes;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
