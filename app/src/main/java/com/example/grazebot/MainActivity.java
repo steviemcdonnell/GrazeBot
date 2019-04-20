@@ -16,13 +16,14 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
-
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MapActivity";
     private String IP_ADDRESS = "";
-    private String PORT = "";
+    private Connection_Status connection_status = Connection_Status.NOT_CONNECTED;
+
+    private final int SETTINGS_CODE = 0;
+    private final int CONTROL_CODE = 1;
 
     private static final int ERROR_DIALOG_REQUEST = 9001;
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Log.d(TAG, "onCreate: " + connection_status.getConnectCode());
         if(isServicesOK()) {
             initMap();
         }
@@ -39,12 +40,14 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if( requestCode == 1) { // Settings Intent Return
+        if( requestCode == SETTINGS_CODE) { // Settings Intent Return
             if(resultCode == Activity.RESULT_OK){
                 try {
                     assert data != null;
                     Bundle bundle = data.getBundleExtra("data");
                     IP_ADDRESS = bundle.getString("ip_address");
+                    connection_status = bundle.getInt("status")==0?Connection_Status.CONNECTED:Connection_Status.NOT_CONNECTED;
+                    Log.d(TAG, "onActivityResult: " + connection_status.getConnectCode() + connection_status);
                     TextView ip_port_label = (TextView) findViewById(R.id.ip_address);
                     ip_port_label.setText(IP_ADDRESS);
                 } catch(NullPointerException e){
@@ -58,24 +61,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickSwitchSettings(View view) {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivityForResult(intent, 1);
         Log.d(TAG, "onClickSwitchSettings: ");
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivityForResult(intent, SETTINGS_CODE);
     }
 
     public void onClickSwitchControl(View view) {
-        Intent intent = new Intent(this, ControlActivity.class);
-        Log.d(TAG, "onClickSwitchControl: ");
-        startActivity(intent);
-    }/*
-    public void onClickSwitchTimer(View view) {
-        Intent intent = new Intent(this, TimerActivity.class);
-        startActivity(intent);
+        Log.d(TAG, "onClickSwitchControl: " + connection_status);
+        if( connection_status == Connection_Status.CONNECTED) {
+            Intent intent = new Intent(this, ControlActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("ip_address", IP_ADDRESS);
+            intent.putExtra("data", bundle);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Not Connected to Server", Toast.LENGTH_LONG).show();
+            onClickSwitchSettings(view);
+        }
     }
-    public void onClickSwitchMaps(View view) {
-        Intent intent = new Intent(this, MapActivity.class);
-        startActivity(intent);
-    }*/
 
     private void initMap() {
         Button buttonMap = (Button) findViewById(R.id.buttonMap);

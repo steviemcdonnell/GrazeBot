@@ -18,6 +18,7 @@ import java.util.HashMap;
 public class SettingsActivity extends AppCompatActivity implements HttpHandler.OnResponseReceived {
 
     private String IP_ADDRESS = "";
+    private Connection_Status connection_status = Connection_Status.NOT_CONNECTED;
     TextView textView = null;
     private static final String TAG = "SettingsActivity";
 
@@ -40,11 +41,6 @@ public class SettingsActivity extends AppCompatActivity implements HttpHandler.O
         httpHandler.makeRequest(IP_ADDRESS, dataTemplate.getJsonData());
     }
 
-    @SuppressLint("SetTextI18n")
-    public void responseCallback(String response){
-
-    }
-
     private void getNetworkData(){
         EditText ip_address = (EditText) findViewById(R.id.ip_address_input);
         EditText port = (EditText) findViewById(R.id.port_input);
@@ -59,11 +55,13 @@ public class SettingsActivity extends AppCompatActivity implements HttpHandler.O
         Bundle bundle = new Bundle();
         getNetworkData();
         bundle.putString("ip_address", IP_ADDRESS);
+        bundle.putInt("conn_status", connection_status.getConnectCode());
         returnIntent.putExtra("data", bundle);
         setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onResponseReceived(String response) {
         Log.e(TAG, "onClickTestConnection: response" + response );
@@ -71,15 +69,18 @@ public class SettingsActivity extends AppCompatActivity implements HttpHandler.O
             if (response.contains("test_OK")) {
                 textView.setText("Connected");
                 textView.setBackgroundColor(getResources().getColor(R.color.connected));
+                connection_status = Connection_Status.CONNECTED;
             }
             else {
-                textView.setText("Not Connected");
+                textView.setText("Corrupt Data");
                 textView.setBackgroundColor(getResources().getColor(R.color.fail_to_connect));
+                connection_status = Connection_Status.NOT_CONNECTED;
             }
         }
         else {
-            textView.setText("Not Connected");
+            textView.setText("No Response");
             textView.setBackgroundColor(getResources().getColor(R.color.fail_to_connect));
+            connection_status = Connection_Status.NOT_CONNECTED;
         }
     }
 }
