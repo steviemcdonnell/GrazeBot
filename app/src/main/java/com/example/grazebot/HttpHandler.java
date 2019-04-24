@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.HashMap;
 
 class HttpHandler {
 
@@ -22,7 +23,7 @@ class HttpHandler {
     private final OnResponseReceived callback;
 
     interface OnResponseReceived {
-        void onResponseReceived(String response);
+        void onResponseReceived(JsonParser response);
     }
 
     // Constructor
@@ -129,7 +130,8 @@ class HttpHandler {
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
-            callback.onResponseReceived(response);
+            JsonParser jsonParser = new JsonParser(response);
+            callback.onResponseReceived(jsonParser);
             Log.e(TAG, "onPostExecute: " + response );
         }
     }

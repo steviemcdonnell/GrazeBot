@@ -80,6 +80,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void onClickSwitchGraphs(View view) {
+        Log.d(TAG, "onClickSwitchGraphs: " + connection_status);
+        if( connection_status == Connection_Status.CONNECTED) {
+            Intent intent = new Intent(this, GraphActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("ip_address", IP_ADDRESS);
+            intent.putExtra("data", bundle);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Not Connected to Server", Toast.LENGTH_LONG).show();
+            onClickSwitchSettings(view);
+        }
+    }
+
     private void initMap() {
         Button buttonMap = (Button) findViewById(R.id.buttonMap);
         buttonMap.setOnClickListener(new View.OnClickListener() {

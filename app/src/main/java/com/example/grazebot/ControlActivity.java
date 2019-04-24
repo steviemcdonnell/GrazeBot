@@ -66,7 +66,7 @@ public class ControlActivity extends AppCompatActivity implements HttpHandler.On
     }
 
     @Override
-    public void onResponseReceived(String response) {
+    public void onResponseReceived(JsonParser response) {
 
     }
 }

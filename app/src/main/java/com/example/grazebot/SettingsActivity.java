@@ -34,7 +34,6 @@ public class SettingsActivity extends AppCompatActivity implements HttpHandler.O
         getNetworkData();
         JsonDataTemplate dataTemplate = new JsonDataTemplate(new HashMap<String, String>(){{
             put("command", "test");
-            put("movement", "Backwards");
         }});
         httpHandler.makeRequest(IP_ADDRESS, dataTemplate.getJsonData());
     }
@@ -61,24 +60,26 @@ public class SettingsActivity extends AppCompatActivity implements HttpHandler.O
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onResponseReceived(String response) {
+    public void onResponseReceived(JsonParser response) {
         Log.e(TAG, "onClickTestConnection: response" + response );
-        if( response != null ){
-            if (response.contains("test_OK")) {
-                textView.setText("Connected");
-                textView.setBackgroundColor(getResources().getColor(R.color.connected));
-                connection_status = Connection_Status.CONNECTED;
-            }
-            else {
-                textView.setText("Corrupt Data");
+        try {
+            if (response != null) {
+                if (response.getMap().get("response").equals("test_OK")) {
+                    textView.setText("Connected");
+                    textView.setBackgroundColor(getResources().getColor(R.color.connected));
+                    connection_status = Connection_Status.CONNECTED;
+                } else {
+                    textView.setText("Corrupt Data");
+                    textView.setBackgroundColor(getResources().getColor(R.color.fail_to_connect));
+                    connection_status = Connection_Status.NOT_CONNECTED;
+                }
+            } else {
+                textView.setText("No Response");
                 textView.setBackgroundColor(getResources().getColor(R.color.fail_to_connect));
                 connection_status = Connection_Status.NOT_CONNECTED;
             }
-        }
-        else {
-            textView.setText("No Response");
-            textView.setBackgroundColor(getResources().getColor(R.color.fail_to_connect));
-            connection_status = Connection_Status.NOT_CONNECTED;
+        } catch( Exception e) {
+            Log.e(TAG, "onResponseReceived: " + e.getMessage() );
         }
     }
 }
