@@ -98,9 +98,16 @@ public class MainActivity extends AppCompatActivity {
         Button buttonMap = (Button) findViewById(R.id.buttonMap);
         buttonMap.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MapActivity.class);
-                startActivity(intent);
+            public void onClick(View view) {
+                if( connection_status == Connection_Status.CONNECTED) {
+                    Intent intent = new Intent(MainActivity.this, MapActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("ip_address", IP_ADDRESS);
+                    intent.putExtra("data", bundle);
+                    startActivity(intent);
+                } else {
+                    onClickSwitchSettings(view);
+                }
             }
         });
     }

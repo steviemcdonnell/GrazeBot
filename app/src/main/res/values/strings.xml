@@ -12,7 +12,7 @@
     <string name="test_button">Test Connection</string>
     <string name="test_label">Status:</string>
     <string name="test_status">Not Connected</string>
-    <string name="test_ip_address">192.168.</string>
+    <string name="test_ip_address">192.168.43.212</string>
     <string name="test_port">8090</string>
     <string name="graph_btn_label">Graphs</string>
 

@@ -5,20 +5,26 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+//import com.example.grazebot.HttpHandler.OnResponseReceived;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -27,8 +33,10 @@ import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Objects;
 
-public class MapActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapActivity extends FragmentActivity implements OnMapReadyCallback, HttpHandler.OnResponseReceived {
 
     private static final String TAG = "MapActivity";
 
@@ -36,23 +44,61 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final float DEFAULT_ZOOM = 15;
-    
+
     // Variables
     private boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
+    private String IP_ADDRESS = null;
     private Marker marker;
+    private Marker grazeBot;
+    private double grazeBotLat;
+    private double grazeBotLong;
+    private final int interval = 1000; // 1 Second
+    private Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            getGPSData();
+            handler.postDelayed(runnable, interval);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-
+        Bundle bundle = getIntent().getBundleExtra("data");
+        IP_ADDRESS = bundle.getString("ip_address");
+        Log.d(TAG, "onCreate: IP:" + IP_ADDRESS);
+        getGPSData();
         getLocationPermission();
+    }
+
+    public void onClickUpdateGPS(View view) {
+        getGPSData();
     }
 
     private void init() {
         Log.d(TAG, "init: Initialising");
     }
+
+    private void getGPSData() {
+        HttpHandler httpHandler = new HttpHandler(this);
+        JsonDataTemplate dataTemplate = new JsonDataTemplate(new HashMap<String, String>() {{
+            put("command", "test");
+        }});
+        httpHandler.makeRequest(IP_ADDRESS, dataTemplate.getJsonData());
+    }
+
+    @Override
+    public void onResponseReceived(JsonParser response) {
+        Log.d(TAG, "onResponseReceived: Response: " + response);
+
+        grazeBotLat = Double.parseDouble(response.getMap().get("robot_latitude"));
+        grazeBotLong = Double.parseDouble(response.getMap().get("robot_longitude"));
+        getFixOnMap();
+        Log.d(TAG, "onResponseReceived: " + grazeBotLat + ", " + grazeBotLong);
+    }
+
 
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: Getting the devices current location");
@@ -73,7 +119,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                                     "My Location");
                         } else {
                             Log.d(TAG, "getDeviceLocation: Current location is null");
-                            Toast.makeText(MapActivity.this, "Unable to get currenr location", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MapActivity.this, "Unable to get current location", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -85,6 +131,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
 
     private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, "moveCamera: Moving the camera to lat: " + latLng.latitude + ", lng: " + latLng.longitude);
+        mMap.clear();
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
         if (!title.equals("My Location")) {
             MarkerOptions options = new MarkerOptions()
@@ -92,6 +139,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     .title(title);
             mMap.addMarker(options);
         }
+
     }
 
     private void getLocationPermission() {
@@ -142,7 +190,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                     }
                     Log.d(TAG, "onRequestPermissionsResult: Permission Granted");
                     mLocationPermissionsGranted = true;
-                    
+
                     // Initialise the map
                     initMap();
                 }
@@ -155,9 +203,20 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
         Toast.makeText(this, "Map is Ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Map is Ready");
         mMap = googleMap;
+    }
+
+    private void getFixOnMap()
+    {
+        LatLng GRAZEBOT = new LatLng(grazeBotLat, grazeBotLong);
+        Log.d(TAG, "onMapReady: " + grazeBotLat + ", " + grazeBotLong);
+        grazeBot = mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(grazeBotLat, grazeBotLong))
+                //        .position(new LatLng(53.883886667, -9.247278333))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        //Toast.makeText(getApplicationContext(), "GrazeBot Location\nLat: " + grazeBotLat + ",\nLong : " + grazeBotLong, Toast.LENGTH_LONG).show();
 
         if (mLocationPermissionsGranted) {
-            getDeviceLocation();
+            //getDeviceLocation();
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
@@ -193,6 +252,7 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback 
                 }
             });
         }
+        moveCamera(GRAZEBOT, 4, "robot");
     }
 }
 
